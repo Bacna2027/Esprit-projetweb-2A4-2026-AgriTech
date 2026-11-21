@@ -41,5 +41,7 @@ function sideLink($key, $label, $href, $icon, $currentPage) {
     <?php endforeach; ?>
     <p class="side-label">Gestion</p>
     <?= sideLink($sideUsers[0], $sideUsers[1], $sideUsers[2], $sideUsers[3], $currentPage) ?>
+    <p class="side-label">Site</p>
+    <?= sideLink('site', 'Retour au site', '../../index.php', '<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h5v-6h4v6h5V10"/>', $currentPage) ?>
   </nav>
 </aside>

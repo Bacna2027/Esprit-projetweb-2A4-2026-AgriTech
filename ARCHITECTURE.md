@@ -108,10 +108,12 @@ $users = (new UserController())->listUsers();
 
 ### 4.1 Front Office page
 
-Each page sets three variables, then includes the shared parts:
+Each page first includes `session.php` (mandatory, see `RULES.md` §4), sets three variables, then includes the shared parts:
 
 ```php
 <?php
+require_once __DIR__ . '/includes/session.php';  // ALWAYS first: session + up-to-date role/status
+
 $pageTitle   = 'Connexion - AgriTech';
 $currentPage = 'login';   // highlights the menu entry
 $basePath    = '';        // relative path from the page to Views/  ('' in Views/, 'Views/' in index.php, '../' in Views/<module>/)
@@ -126,7 +128,7 @@ $basePath    = '';        // relative path from the page to Views/  ('' in Views
 
 ### 4.2 Back Office page
 
-Pages in `Views/admin/` include `admin/includes/head.php`, `admin/includes/sidebar.php` (set `$currentPage`: `dashboard`, `drones`, `materiel`, `energie`, `forum`, `plantes`, `users`) and the shared `../includes/footer.php`. Layout: `.admin-wrap` › `.sidebar` + `.admin-main` (`.topbar` + `<main>`). See `dashboard.php`.
+Pages in `Views/admin/` start with `require_once __DIR__ . '/../includes/session.php';`, then include `admin/includes/head.php`, `admin/includes/sidebar.php` (set `$currentPage`: `dashboard`, `drones`, `materiel`, `energie`, `forum`, `plantes`, `users`) and the shared `../includes/footer.php`. Layout: `.admin-wrap` › `.sidebar` + `.admin-main` (`.topbar` + `<main>`). See `dashboard.php`.
 
 ### 4.3 Module entry pages (auto-linked)
 

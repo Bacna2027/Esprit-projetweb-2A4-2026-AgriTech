@@ -45,7 +45,7 @@ Principle: **user management is split across the 5 members** (so everyone has tr
 ## B — Sessions & security + Drones
 
 - **B1 — Security helpers** *(blocking — follow the teacher's workshop)*
-  - Secure session start: `HttpOnly`, `SameSite=Lax`, `use_strict_mode`; inactivity timeout (e.g. 30 min) → logout + message.
+  - Secure session start: add to the **existing** `Views/includes/session.php` (already included by every page, see `RULES.md` §4): `HttpOnly`, `SameSite=Lax`, `use_strict_mode`; inactivity timeout (e.g. 30 min) → logout + message.
   - CSRF: generate a token per session, hidden-field helper, check helper (with `hash_equals`).
   - Page guards: `requireLogin()`, `requireRole('admin')` → redirect to login or a 403 page.
   - Agree with the team on the file location (e.g. `Controllers/AuthGuard.php` or a shared include) and document it in `ARCHITECTURE.md`.

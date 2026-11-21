@@ -43,7 +43,18 @@ Follow `ARCHITECTURE.md`. The project uses the MVC pattern taught in the Esprit 
 
 - **SQL**: PDO prepared statements only (`prepare` + `execute` with bound values). Never concatenate variables into a query.
 - **Passwords**: `password_hash()` and `password_verify()`. Never store plain-text passwords, never use MD5/SHA1.
-- **Sessions**: every page starts with `require_once` of `Views/includes/session.php` (instead of a bare `session_start()`; it also re-reads the user's role/status from the database), `session_regenerate_id(true)` after login, full destruction on logout, inactivity timeout, `HttpOnly` / `SameSite` cookies. Follow the workshop provided by the teacher.
+- **Sessions — always include `Views/includes/session.php`**:
+  - Every page (Front and Back Office) must start with this include, **as its first line of code, before any HTML**. Never call `session_start()` directly in a page (only exception: `Views/logout.php`, which just destroys the session).
+  - What it does: starts the session and re-reads the logged-in user from the database on every page. A role change (`agriculteur` ⇄ `admin`) is applied at the next page load without logging out, and a deleted or `inactif` account is logged out automatically.
+  - The path depends on where the page is:
+    ```php
+    require_once __DIR__ . '/Views/includes/session.php';     // index.php (project root)
+    require_once __DIR__ . '/includes/session.php';           // Views/login.php, Views/register.php…
+    require_once __DIR__ . '/../includes/session.php';        // Views/admin/*.php, Views/<module>/*.php
+    ```
+    (A module can wrap it in its own `includes/init.php`, like `Views/materiel/includes/init.php`.)
+  - Shared file: improve it (cookie settings, timeout — task B1) instead of creating a second session file.
+  - Other session rules: `session_regenerate_id(true)` after login, full destruction on logout (`Views/logout.php`), inactivity timeout, `HttpOnly` / `SameSite` cookies. Follow the workshop provided by the teacher.
 - **Authorization (RBAC)**: the app supports exactly two roles, `admin` and `agriculteur` (see `PROJECT.md` §6). Every protected page and action checks the role server-side. Hiding a menu link is not enough — `Views/admin/*` must refuse non-admins. Sign-up always creates `agriculteur`; never let a form choose `admin` except the admin's user management. Do not add a role without asking.
 - **XSS**: every displayed value goes through `htmlspecialchars($v, ENT_QUOTES, 'UTF-8')`.
 - **CSRF**: token in every POST form (including edit and delete). Forms that change data use `method="post"`; deletions use POST, never a GET link.
@@ -69,7 +80,7 @@ A task that adds or changes a form is not done until both validations exist and 
 - One file = one class. One Model and one Controller per entity.
 - The UI is in **French** (`<html lang="fr">`). Code comments: short, French or English, consistent with the file; only when the "why" is not obvious.
 - Include files with `__DIR__` (`require_once __DIR__ . '/../../Controllers/UserController.php';`), never with paths relative to the current working directory.
-- Pages set `$pageTitle`, `$currentPage` and `$basePath` before including the shared head/navbar (see `ARCHITECTURE.md` §4).
+- Page order: 1) `require_once` of `session.php` (§4), 2) Controllers, 3) `$pageTitle`, `$currentPage`, `$basePath`, 4) request handling, 5) HTML with the shared head/navbar (see `ARCHITECTURE.md` §4).
 - No dead code, no leftover `var_dump` / `print_r` / `die` debug output.
 
 ## 7. Database

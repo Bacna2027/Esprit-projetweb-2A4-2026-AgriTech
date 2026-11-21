@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../includes/session.php';
+
 $pageTitle = 'Tableau de bord - AgriTech';
 $currentPage = 'dashboard';
 ?>
@@ -14,7 +16,10 @@ $currentPage = 'dashboard';
       <div class="admin-main">
         <header class="topbar">
           <h2>Espace administrateur</h2>
-          <nav><a href="../logout.php">Déconnexion</a></nav>
+          <nav>
+            <a href="../../index.php">Voir le site</a>
+            <a href="../logout.php">Déconnexion</a>
+          </nav>
         </header>
 
         <main>

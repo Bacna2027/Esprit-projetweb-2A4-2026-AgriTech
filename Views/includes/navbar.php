@@ -1,6 +1,6 @@
 <?php
 // Navbar GLOBALE : index, login, register.
-// La page qui l'inclut doit appeler session_start() tout en haut (avant le HTML).
+// La page qui l'inclut doit inclure Views/includes/session.php tout en haut (avant le HTML).
 // Chaque module a sa propre navbar dans <module>/includes/navbar.php
 $currentPage = $currentPage ?? '';
 
