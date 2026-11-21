@@ -14,7 +14,7 @@ $currentPage = 'dashboard';
       <div class="admin-main">
         <header class="topbar">
           <h2>Espace administrateur</h2>
-          <nav><a href="../login.php">Déconnexion</a></nav>
+          <nav><a href="../logout.php">Déconnexion</a></nav>
         </header>
 
         <main>

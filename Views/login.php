@@ -1,11 +1,66 @@
 <?php
+declare(strict_types=1);
+
+session_start();
+require_once __DIR__ . '/../Controllers/UserController.php';
+
 $pageTitle = 'Connexion - AgriTech';
 $currentPage = 'login';
+
+$errors = [];
+$email = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+
+    // Server-side validation (same rules as validation.js)
+    if ($email === '') {
+        $errors['email'] = "L'email est obligatoire.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Adresse email invalide.';
+    }
+    if ($password === '') {
+        $errors['password'] = 'Le mot de passe est obligatoire.';
+    }
+
+    if (empty($errors)) {
+        $userController = new UserController();
+        $user = $userController->getUserByEmail($email);
+
+        // Same message for "unknown email" and "wrong password" (don't reveal which one)
+        if ($user === null || !password_verify($password, $user['password'])) {
+            $errors['login'] = 'Email ou mot de passe incorrect.';
+        } elseif ($user['statut'] !== 'actif') {
+            $errors['login'] = 'Votre compte est désactivé. Contactez un administrateur.';
+        } else {
+            // New session id after login (protection against session fixation)
+            session_regenerate_id(true);
+            $_SESSION['id_user'] = (int) $user['id_user'];
+            $_SESSION['nom'] = $user['nom'];
+            $_SESSION['prenom'] = $user['prenom'];
+            $_SESSION['role'] = $user['role'];
+
+            if ($user['role'] === 'admin') {
+                header('Location: admin/dashboard.php');
+            } else {
+                header('Location: ../index.php');
+            }
+            exit;
+        }
+    }
+}
+
+function e(string $value): string
+{
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
   <head>
     <?php require_once __DIR__ . '/includes/head.php'; ?>
+    <script src="assets/js/validation.js" defer></script>
   </head>
   <body>
     <?php require_once __DIR__ . '/includes/navbar.php'; ?>
@@ -21,9 +76,24 @@ $currentPage = 'login';
       <section class="auth-card">
         <h1>Connexion</h1>
         <p class="lead">Accédez à votre espace AgriTech.</p>
-        <form action="admin/dashboard.php">
-          <label>Email <input type="email" name="email" required></label>
-          <label>Mot de passe <input type="password" name="password" required></label>
+        <?php if (isset($_GET['inscrit'])): ?>
+          <p class="alert success">Compte créé. Vous pouvez maintenant vous connecter.</p>
+        <?php endif; ?>
+        <?php if (isset($_GET['deconnecte'])): ?>
+          <p class="alert success">Vous êtes déconnecté.</p>
+        <?php endif; ?>
+        <?php if (isset($errors['login'])): ?>
+          <p class="alert error"><?= e($errors['login']) ?></p>
+        <?php endif; ?>
+        <form method="post" action="login.php" novalidate data-validate>
+          <label>Email
+            <input type="email" name="email" value="<?= e($email) ?>" data-required data-email data-label="L'email" class="<?= isset($errors['email']) ? 'invalid' : '' ?>">
+            <?php if (isset($errors['email'])): ?><span class="field-error"><?= e($errors['email']) ?></span><?php endif; ?>
+          </label>
+          <label>Mot de passe
+            <input type="password" name="password" data-required data-label="Le mot de passe" class="<?= isset($errors['password']) ? 'invalid' : '' ?>">
+            <?php if (isset($errors['password'])): ?><span class="field-error"><?= e($errors['password']) ?></span><?php endif; ?>
+          </label>
           <button type="submit">Se connecter</button>
         </form>
         <p class="alt">Pas de compte ? <a href="register.php">Inscription</a></p>

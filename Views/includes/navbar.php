@@ -1,5 +1,6 @@
 <?php
 // Navbar GLOBALE : index, login, register.
+// La page qui l'inclut doit appeler session_start() tout en haut (avant le HTML).
 // Chaque module a sa propre navbar dans <module>/includes/navbar.php
 $currentPage = $currentPage ?? '';
 
@@ -31,8 +32,16 @@ $homeHref = $logoBase === '' ? '../index.php' : 'index.php';
       <a href="<?= $exists ? $logoBase . $entry : '#' ?>" class="<?= navActive($key, $currentPage) ?>"title="<?= $exists ? $full : $full . ' (bientôt disponible)' ?>"<?= $key === $currentPage ? ' aria-current="page"' : '' ?>><?= $label ?></a>
     <?php endforeach; ?>
     <span class="nav-sep" aria-hidden="true"></span>
-    <a href="<?= $logoBase ?>login.php" class="<?= navActive('login', $currentPage) ?>">Connexion</a>
-    <a href="<?= $logoBase ?>register.php" class="nav-cta <?= navActive('register', $currentPage) ?>">Inscription</a>
+    <?php if (isset($_SESSION['id_user'])): ?>
+      <?php if ($_SESSION['role'] === 'admin'): ?>
+        <a href="<?= $logoBase ?>admin/dashboard.php">Administration</a>
+      <?php endif; ?>
+      <span class="nav-user">Bonjour, <?= htmlspecialchars($_SESSION['prenom'], ENT_QUOTES, 'UTF-8') ?></span>
+      <a href="<?= $logoBase ?>logout.php" class="nav-cta">Déconnexion</a>
+    <?php else: ?>
+      <a href="<?= $logoBase ?>login.php" class="<?= navActive('login', $currentPage) ?>">Connexion</a>
+      <a href="<?= $logoBase ?>register.php" class="nav-cta <?= navActive('register', $currentPage) ?>">Inscription</a>
+    <?php endif; ?>
   </nav>
   </div>
 </header>

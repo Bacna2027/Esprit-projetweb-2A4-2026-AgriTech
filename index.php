@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 $pageTitle = 'Accueil - AgriTech';
 $currentPage = 'index';
 $basePath = 'Views/';

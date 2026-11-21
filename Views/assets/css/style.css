@@ -35,6 +35,7 @@ header.site-header { position: sticky; top: 0; z-index: 50; background: var(--da
 .site-header nav a:hover::after, .site-header nav a.active::after { transform: scaleX(1); }
 .site-header nav a.active { color: #fff; font-weight: 600; background: rgba(212, 160, 23, .16); }
 .site-header nav .nav-sep { width: 1px; height: 22px; margin: 0 8px; background: rgba(255, 255, 255, .2); }
+.site-header nav .nav-user { padding: 0 10px; color: rgba(255, 255, 255, .85); font-size: .9rem; }
 .site-header nav a.nav-cta { margin-left: 4px; background: var(--gold); color: var(--dark); font-weight: 700; }
 .site-header nav a.nav-cta::after { display: none; }
 .site-header nav a.nav-cta:hover { background: #e3b023; }
