@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/Views/includes/session.php';
 
 $pageTitle = 'Accueil - AgriTech';
 $currentPage = 'index';
@@ -30,7 +30,11 @@ $basePath = 'Views/';
           <span class="eyebrow">Agriculture intelligente et durable</span>
           <h1>Bienvenue sur <span>AgriTech</span></h1>
           <p class="lead">Gérez vos drones, matériel, énergie, plantes et traitements au même endroit.</p>
-          
+          <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <div class="actions">
+              <a class="button gold" href="Views/admin/dashboard.php">Accéder au tableau de bord</a>
+            </div>
+          <?php endif; ?>
         </div>
         <div class="scene" aria-hidden="true">
           <svg class="tree t1" viewBox="0 0 64 96" aria-hidden="true"><use href="#tree"/></svg><svg class="tree t2" viewBox="0 0 64 96" aria-hidden="true"><use href="#pine"/></svg><svg class="tree t3" viewBox="0 0 64 96" aria-hidden="true"><use href="#tree"/></svg><svg class="tree t4" viewBox="0 0 64 96" aria-hidden="true"><use href="#pine"/></svg><svg class="tree t5" viewBox="0 0 64 96" aria-hidden="true"><use href="#tree"/></svg><svg class="tree t6" viewBox="0 0 64 96" aria-hidden="true"><use href="#pine"/></svg>

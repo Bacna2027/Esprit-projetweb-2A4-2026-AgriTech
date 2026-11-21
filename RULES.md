@@ -43,8 +43,8 @@ Follow `ARCHITECTURE.md`. The project uses the MVC pattern taught in the Esprit 
 
 - **SQL**: PDO prepared statements only (`prepare` + `execute` with bound values). Never concatenate variables into a query.
 - **Passwords**: `password_hash()` and `password_verify()`. Never store plain-text passwords, never use MD5/SHA1.
-- **Sessions**: `session_start()` on every protected page, `session_regenerate_id(true)` after login, full destruction on logout, inactivity timeout, `HttpOnly` / `SameSite` cookies. Follow the workshop provided by the teacher.
-- **Authorization (RBAC)**: every protected page and action checks the role server-side (`admin` / `agriculteur`). Hiding a menu link is not enough — `Views/admin/*` must refuse non-admins.
+- **Sessions**: every page starts with `require_once` of `Views/includes/session.php` (instead of a bare `session_start()`; it also re-reads the user's role/status from the database), `session_regenerate_id(true)` after login, full destruction on logout, inactivity timeout, `HttpOnly` / `SameSite` cookies. Follow the workshop provided by the teacher.
+- **Authorization (RBAC)**: the app supports exactly two roles, `admin` and `agriculteur` (see `PROJECT.md` §6). Every protected page and action checks the role server-side. Hiding a menu link is not enough — `Views/admin/*` must refuse non-admins. Sign-up always creates `agriculteur`; never let a form choose `admin` except the admin's user management. Do not add a role without asking.
 - **XSS**: every displayed value goes through `htmlspecialchars($v, ENT_QUOTES, 'UTF-8')`.
 - **CSRF**: token in every POST form (including edit and delete). Forms that change data use `method="post"`; deletions use POST, never a GET link.
 - **Uploads** (forum images): check the real MIME type (`finfo`), extension and size; rename the file; never trust the client file name.

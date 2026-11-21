@@ -179,28 +179,31 @@ Full diagram (PK, FK, 1-N and N-N relationships, data dictionary): [`docs/diagra
 | PDO connection | `config.php` (`config::getConnexion()`, exceptions enabled, `FETCH_ASSOC`) |
 | Prepared queries | Controllers |
 | Password hashing | `UserController` (`password_hash` / `password_verify`) |
-| Session + role check | Top of every protected page (`Views/admin/*` = admin only) — a shared helper is still to be created |
+| Roles | Two roles only: `admin` and `agriculteur` (`User.role`, details in `PROJECT.md` §6). Stored in `$_SESSION['role']` at login |
+| Session | `Views/includes/session.php`, included at the top of every page: starts the session and re-reads the user from the database (role/status changes apply without re-login; deleted or `inactif` account = logged out). Task B1 adds the cookie settings and the timeout to this file |
+| Role check | Top of every protected page (`Views/admin/*` = `admin` only, modules = logged in) — shared guard functions still to be created (task B1) |
 | CSRF token | Hidden field in POST forms, checked before calling the Controller |
 | Server-side validation | Controllers (or the page, before calling the Controller) |
-| Client-side validation | A dedicated JS file (not `main.js`) |
+| Client-side validation | `Views/assets/js/validation.js` (rules as `data-*` attributes on the inputs) |
 | XSS escaping | Views (`htmlspecialchars`) |
 
 ## 7. User management module (detail)
 
-| Action | Page (suggested) | Controller method | Role |
+| Action | Page | Controller method | Allowed for |
 |---|---|---|---|
-| Sign up | `Views/register.php` | `UserController::addUser` | visitor |
-| Log in / log out | `Views/login.php`, `Views/logout.php` | `UserController::login` | visitor / logged in |
-| Profile, edit, password | `Views/profile.php` | `UserController::updateUser`, `changePassword` | logged in |
-| List (search, role filter, sort) | `Views/users/users.php` | `UserController::listUsers` | admin |
-| Detail / edit (including role) | `Views/users/editUser.php` | `getUser`, `updateUser` | admin |
-| Create | `Views/users/addUser.php` | `addUser` | admin |
-| Delete (POST + CSRF) | `Views/users/deleteUser.php` | `deleteUser` | admin |
+| Sign up (always creates `agriculteur`) | `Views/register.php` ✅ | `UserController::addUser`, `emailExists` | visitor |
+| Log in / log out (redirect by role) | `Views/login.php` ✅, `Views/logout.php` ✅ | `UserController::getUserByEmail` + `password_verify` | visitor / logged in |
+| Profile, edit, password | `Views/profile.php` | `UserController::updateUser`, `changePassword` | `agriculteur`, `admin` |
+| List (search, role filter, sort) | `Views/users/users.php` | `UserController::listUsers` | `admin` |
+| Detail / edit (including role and statut) | `Views/users/editUser.php` | `getUserById`, `updateUser` | `admin` |
+| Create (can choose the role) | `Views/users/addUser.php` | `addUser` | `admin` |
+| Delete (POST + CSRF) | `Views/users/deleteUser.php` | `deleteUser` | `admin` |
+
+✅ = implemented.
 
 ## 8. Known gaps in the current code
 
-- `Views/login.php` and `Views/register.php` are static: no `method="post"`, no Controller, the login form goes straight to `admin/dashboard.php`. There is no session or role check yet.
-- `register.php` has one "Nom complet" field, but `User` has separate `nom` and `prenom` columns.
+- `Views/admin/*` does not check the `admin` role yet, and forms have no CSRF token yet (tasks B1–B2).
 - `Views/admin/dashboard.php` shows sample figures, including "Sols" and "Climat" cards that have no table in the schema.
 - `config.php` prints the PDO error message with `die()` on connection failure; that should be logged instead (see `RULES.md` §4).
 - `Views/includes/navbar.php`: the home link is computed as `index.php` when `$basePath` is not `''`, which is wrong for pages in `Views/<module>/` (`$basePath = '../'`).

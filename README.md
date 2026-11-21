@@ -35,7 +35,10 @@ Farm management web application in **PHP (MVC architecture)**, with a **Front Of
 - Module administration: drones, matériel, énergie, forum (moderation), plantes
 
 ### Cross-cutting
-- Role management (`admin`, `agriculteur`) and per-role authorization
+- Role management and per-role authorization — two roles (details: [`PROJECT.md`](PROJECT.md) §6):
+  - `agriculteur` (farmer): default role at sign-up, uses the Front Office modules with their own data
+  - `admin` (administrator): Back Office, user management, module administration — assigned only by another admin
+- Account status `actif` / `inactif` (a disabled account cannot log in)
 - Secure sessions
 - Input validation on the client (JavaScript) and server (PHP)
 

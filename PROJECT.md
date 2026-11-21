@@ -64,18 +64,37 @@ All forms: validation on **both sides, JavaScript AND PHP** — mandatory for th
 - Complete `README.md`: presentation, features, installation, configuration, how to run.
 - Strict compliance with the repository **naming rules** sent by email.
 
-## 6. Roles and permissions (baseline proposal)
+## 6. Roles and permissions
 
-| Action | Visitor | Farmer | Admin |
+### 6.1 Supported roles
+
+The application supports **exactly two roles**, stored in `User.role` (`ENUM('admin','agriculteur')`). No other role exists; do not add one without the team's agreement.
+
+| Role | Value in the database | Label in the UI | How a user gets it | Interface |
+|---|---|---|---|---|
+| **Farmer** | `agriculteur` | Agriculteur | Default role: every account created through the sign-up page (`Views/register.php`) | Front Office |
+| **Administrator** | `admin` | Administrateur | Only set by another admin (user management) or in `seed.sql` — **never** through the sign-up page | Back Office (+ Front Office) |
+
+A **visitor** (not logged in) is not a role: it is simply the absence of a session.
+
+Related rules:
+- After login, the role is stored in the session (`$_SESSION['role']`) and checked **server-side** on every protected page.
+- Login redirects by role: `admin` → `Views/admin/dashboard.php`, `agriculteur` → home page.
+- Accounts also have a status (`User.statut`: `actif` / `inactif`): an `inactif` account cannot log in, whatever its role.
+
+### 6.2 Permissions
+
+| Action | Visitor | Farmer (`agriculteur`) | Admin (`admin`) |
 |---|:-:|:-:|:-:|
 | Sign up / log in | ✅ | — | — |
 | Use the 5 modules (own data) | ❌ | ✅ | ✅ |
 | Edit own profile / password | ❌ | ✅ | ✅ |
-| Access the Back Office | ❌ | ❌ | ✅ |
-| CRUD on all users | ❌ | ❌ | ✅ |
-| Moderate forum (delete posts/comments) | ❌ | ❌ | ✅ |
+| Access the Back Office (`Views/admin/`) | ❌ | ❌ | ✅ |
+| CRUD on all users, change roles, enable/disable accounts | ❌ | ❌ | ✅ |
+| Manage reference data (equipment categories, drones, energy categories…) | ❌ | ❌ | ✅ |
+| Moderate forum (delete any post/comment) | ❌ | ❌ | ✅ |
 
-> Adjust to the teacher's exact instructions. An admin must not be able to delete or demote themselves by mistake.
+> An admin must not be able to delete, demote or disable themselves, and the last admin cannot be removed.
 
 ## 7. Tech stack
 
