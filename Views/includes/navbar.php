@@ -18,19 +18,21 @@ $modules = [
     'Plantes et traitements'=> ['plantes',  'plantes/plantes.php',        'Gestion des plantes et des traitements'],
 ];
 $logoBase = $basePath ?? '';
+// Accueil = index.php à la racine du projet
+$homeHref = $logoBase === '' ? '../index.php' : 'index.php';
 ?>
 <header class="site-header">
   <div class="bar">
-  <a class="brand" href="index.php"><img class="brand-logo" src="<?= $logoBase ?>assets/img/logo.png" alt="" width="36" height="36"><span>AgriTech</span></a>
+  <a class="brand" href="<?= $homeHref ?>"><img class="brand-logo" src="<?= $logoBase ?>assets/img/logo.png" alt="" width="36" height="36"><span>AgriTech</span></a>
   <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="Ouvrir le menu">Menu</button>
   <nav id="main-nav">
     <?php foreach ($modules as $label => [$key, $entry, $full]): ?>
       <?php $exists = file_exists(__DIR__ . '/../' . $entry); ?>
-      <a href="<?= $exists ? $entry : '#' ?>" class="<?= navActive($key, $currentPage) ?>"title="<?= $exists ? $full : $full . ' (bientôt disponible)' ?>"<?= $key === $currentPage ? ' aria-current="page"' : '' ?>><?= $label ?></a>
+      <a href="<?= $exists ? $logoBase . $entry : '#' ?>" class="<?= navActive($key, $currentPage) ?>"title="<?= $exists ? $full : $full . ' (bientôt disponible)' ?>"<?= $key === $currentPage ? ' aria-current="page"' : '' ?>><?= $label ?></a>
     <?php endforeach; ?>
     <span class="nav-sep" aria-hidden="true"></span>
-    <a href="login.php" class="<?= navActive('login', $currentPage) ?>">Connexion</a>
-    <a href="register.php" class="nav-cta <?= navActive('register', $currentPage) ?>">Inscription</a>
+    <a href="<?= $logoBase ?>login.php" class="<?= navActive('login', $currentPage) ?>">Connexion</a>
+    <a href="<?= $logoBase ?>register.php" class="nav-cta <?= navActive('register', $currentPage) ?>">Inscription</a>
   </nav>
   </div>
 </header>

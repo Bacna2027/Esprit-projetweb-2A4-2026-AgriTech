@@ -1,14 +1,15 @@
 <?php
 $pageTitle = 'Accueil - AgriTech';
 $currentPage = 'index';
+$basePath = 'Views/';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
   <head>
-    <?php require_once __DIR__ . '/includes/head.php'; ?>
+    <?php require_once __DIR__ . '/Views/includes/head.php'; ?>
   </head>
   <body>
-    <?php require_once __DIR__ . '/includes/navbar.php'; ?>
+    <?php require_once __DIR__ . '/Views/includes/navbar.php'; ?>
 
     <main class="home">
       <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -48,6 +49,6 @@ $currentPage = 'index';
         </div>
       </section>
     </main>
-    <?php require_once __DIR__ . '/includes/footer.php'; ?>
+    <?php require_once __DIR__ . '/Views/includes/footer.php'; ?>
   </body>
 </html>
